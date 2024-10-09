@@ -1,0 +1,41 @@
+package templates
+
+templ Base(content templ.Component) {
+	<!DOCTYPE html>
+	<html>
+	<head>
+		<title>Fun Flower Lamps</title>
+		<link rel="stylesheet" href="assets/styles/styles.css">
+	</head>
+	<script>
+		function updateImage(){
+			var input = document.getElementById("products");
+			var select = input.value;
+			document.getElementById("productImg").src = "/assets/images/"+select+".jpg";
+			document.getElementById("productImg").blur();
+			var title = document.getElementById("prodLabel");
+			title.innerHTML = select + " Lamp";
+		}
+	</script>
+	<body>
+		@header()
+		<div id="content">
+		@content
+		</div>
+		@footer()
+	</body>
+	</html>
+}
+
+templ header() {
+	<header>
+		<h1>Fun Flower Lamps!</h1>
+		<p>Tired of modern and boring decor? Try having fun with your life!</p>
+	</header>
+	<nav>
+    <ul>
+        <li><a href="">Home</a></li>
+  	    <li><a href="http://localhost:8000/store">Shop</a></li>
+    </ul>	
+	</nav>
+}

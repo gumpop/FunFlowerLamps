@@ -1,0 +1,65 @@
+package templates
+
+import (
+"fmt"
+"go-store/types"
+)
+
+templ Store(products map[string]float64) {
+	<form id="store-form" method="POST" action="/purchase">
+		<fieldset>
+		<legend>Personal Info</legend>
+			<label for="first-name">*First Name:</label><br>
+			<input type="text" id="first-name" name="fName" value="Jane" pattern="[ A-Za-z']{1,32}" title="Name can only contain letters and apostrophies" required><br>
+
+			<label for="last-name">*Last Name:</label><br>
+			<input type="text" id="last-name" name="lName" value="Doe" pattern="[ A-Za-z']{1,32}" title="Name can only contain letters and apostrophies" required><br>
+
+			<label for="email">*Email:</label><br>
+			<input type="email" id="email" name="email" required><br>
+		</fieldset>
+		
+		<fieldset>
+			<legend>Product Info</legend>
+			<label for="products">*Choose a product:</label>
+        	<select id="products" name="productName" onchange="updateImage()" required>
+				<option value="" disabled selected>Select an option</option>
+				for product, price := range products {
+					<option value={product}>{ fmt.Sprintf("%s - %.2f", product,
+						price) }</option>
+				}
+        	</select><br><br>
+			<label for="quantity">Quantity:</label>
+			<input type="number" id="quantity" name="quantity" value="1" min="1" max="100">
+		</fieldset>
+
+
+		<p>*Round up for charity?</p>
+		<label for="yes">yes</label>
+		<input type="radio" id="yes" name="rup" value="True">
+		<label for="no">no</label>
+		<input type="radio" id="no" name="rup" value="False" checked>
+
+		<input type="submit" value="Submit">
+	</form>
+	<div id="product-view">
+		<p id="prodLabel">Image will appear once a product is selected!</p>
+		<img id="productImg" src="" alt="Product Picture" width="400" height="500" onchange="updateImage()"></img>
+	</div>
+	
+}
+
+templ PurchaseConfirmation(purchaseInformation types.PurchaseInfo) {
+<div>
+	<p>Thank you for your order, 
+	{ fmt.Sprintf("%s %s (%s)", purchaseInformation.FName, purchaseInformation.LName, purchaseInformation.Email) }.</p>
+	<p>You have selected 
+	{ fmt.Sprintf("%d %s Lamp(s) at %.2f each", purchaseInformation.Quantity, purchaseInformation.ProductName, purchaseInformation.ProductPrice) }.</p>
+	<p>Subtotal: { fmt.Sprintf("$%.2f", purchaseInformation.SubTotal) }<br>
+	Total with Tax &#40 8.75% &#41: { fmt.Sprintf("$%.2f", purchaseInformation.TotalTax) }</p>
+	if purchaseInformation.RoundUp {
+		<p>Total with donation &#40AKA my super sick tax writeoff &#41 : { fmt.Sprintf("$%.2f", purchaseInformation.TotalRound) }</p>
+	}
+	<p>Thank you for shopping at Fun Flower Lamps! Order again soon!</p>
+</div>
+}
