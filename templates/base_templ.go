@@ -29,7 +29,7 @@ func Base(content templ.Component) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html><head><title>Fun Flower Lamps</title><link rel=\"stylesheet\" href=\"assets/styles/styles.css\"></head><script>\n\t\tfunction updateImage(){\n\t\t\tvar input = document.getElementById(\"products\");\n\t\t\tvar select = input.value;\n\t\t\tdocument.getElementById(\"productImg\").src = \"/assets/images/\"+select+\".jpg\";\n\t\t\tdocument.getElementById(\"productImg\").blur();\n\t\t\tvar title = document.getElementById(\"prodLabel\");\n\t\t\ttitle.innerHTML = select + \" Lamp\";\n\t\t}\n\t</script><body>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html><head><title>Fun Flower Lamps</title><link rel=\"stylesheet\" href=\"assets/styles/styles.css\"></head><script>\n\t\tfunction updateImage(prod){\n\t\t\tvar input = document.getElementById(\"products\");\n\t\t\tvar select = prod[prod.selectedIndex].dataset.image;\n\t\t\tconst quantity = prod[prod.selectedIndex].dataset.stock;\n\t\t\tdocument.getElementById(\"productImg\").src = \"/assets/images/\"+select;\n\t\t\tdocument.getElementById(\"productImg\").blur();\n\t\t\tvar title = document.getElementById(\"prodLabel\");\n\t\t\tif(quantity == 0){\n\t\t\t\ttitle.innerHTML = \"SOLD OUT\";\n\t\t\t} else if(quantity < 5){\n\t\t\t\ttitle.innerHTML = \"Only \"+quantity+\" left!\";\n\t\t\t}\n\t\t\t\n\t\t}\n\t</script><body>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -82,7 +82,7 @@ func header() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<header><h1>Fun Flower Lamps!</h1><p>Tired of modern and boring decor? Try having fun with your life!</p></header><nav><ul><li><a href=\"\">Home</a></li><li><a href=\"http://localhost:8000/store\">Shop</a></li></ul></nav>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<header><h1>Fun Flower Lamps!</h1><p>Tired of modern and boring decor? Try having fun with your life!</p></header><nav><ul><li><a href=\"\">Home</a></li><li><a href=\"http://localhost:8000/store\">Shop</a></li><li><a href=\"http://localhost:8000/admin\">Admin</a></li></ul></nav>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

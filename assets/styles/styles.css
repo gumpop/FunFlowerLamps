@@ -92,3 +92,8 @@ img {
 	border-color: #86125a;
 }
 
+p#prodLabel {
+    color: #ac005e;
+    font-weight: bold;
+}
+

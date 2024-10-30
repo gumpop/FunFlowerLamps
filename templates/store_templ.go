@@ -11,9 +11,10 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"fmt"
 	"go-store/types"
+	"time"
 )
 
-func Store(products map[string]float64) templ.Component {
+func Store(products []types.Product) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -34,21 +35,47 @@ func Store(products map[string]float64) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form id=\"store-form\" method=\"POST\" action=\"/purchase\"><fieldset><legend>Personal Info</legend> <label for=\"first-name\">*First Name:</label><br><input type=\"text\" id=\"first-name\" name=\"fName\" value=\"Jane\" pattern=\"[ A-Za-z&#39;]{1,32}\" title=\"Name can only contain letters and apostrophies\" required><br><label for=\"last-name\">*Last Name:</label><br><input type=\"text\" id=\"last-name\" name=\"lName\" value=\"Doe\" pattern=\"[ A-Za-z&#39;]{1,32}\" title=\"Name can only contain letters and apostrophies\" required><br><label for=\"email\">*Email:</label><br><input type=\"email\" id=\"email\" name=\"email\" required><br></fieldset><fieldset><legend>Product Info</legend> <label for=\"products\">*Choose a product:</label> <select id=\"products\" name=\"productName\" onchange=\"updateImage()\" required><option value=\"\" disabled selected>Select an option</option> ")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form id=\"store-form\" method=\"POST\" action=\"/purchase\"><fieldset><legend>Personal Info</legend> <label for=\"first-name\">*First Name:</label><br><input type=\"text\" id=\"first-name\" name=\"fName\" value=\"Jane\" pattern=\"[ A-Za-z&#39;]{1,32}\" title=\"Name can only contain letters and apostrophies\" required><br><label for=\"last-name\">*Last Name:</label><br><input type=\"text\" id=\"last-name\" name=\"lName\" value=\"Doe\" pattern=\"[ A-Za-z&#39;]{1,32}\" title=\"Name can only contain letters and apostrophies\" required><br><label for=\"email\">*Email:</label><br><input type=\"email\" id=\"email\" name=\"email\" required><br></fieldset><fieldset><legend>Product Info</legend> <label for=\"products\">*Choose a product:</label> <select id=\"products\" name=\"productName\" onchange=\"updateImage(this)\" required><option value=\"\" disabled selected>Select an option</option> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for product, price := range products {
+		for _, prod := range products {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<option value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(product)
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", prod.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/store.templ`, Line: 28, Col: 27}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/store.templ`, Line: 29, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" data-stock=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var3 string
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", prod.InStock))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/store.templ`, Line: 29, Col: 90}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" data-image=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(prod.Image)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/store.templ`, Line: 29, Col: 114}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -56,13 +83,13 @@ func Store(products map[string]float64) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s - %.2f", product,
-				price))
+			var templ_7745c5c3_Var5 string
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s - %.2f", prod.Name,
+				prod.Price))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/store.templ`, Line: 29, Col: 12}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/store.templ`, Line: 30, Col: 16}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -71,7 +98,20 @@ func Store(products map[string]float64) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</select><br><br><label for=\"quantity\">Quantity:</label> <input type=\"number\" id=\"quantity\" name=\"quantity\" value=\"1\" min=\"1\" max=\"100\"></fieldset><p>*Round up for charity?</p><label for=\"yes\">yes</label> <input type=\"radio\" id=\"yes\" name=\"rup\" value=\"True\"> <label for=\"no\">no</label> <input type=\"radio\" id=\"no\" name=\"rup\" value=\"False\" checked> <input type=\"submit\" value=\"Submit\"></form><div id=\"product-view\"><p id=\"prodLabel\">Image will appear once a product is selected!</p><img id=\"productImg\" src=\"\" alt=\"Product Picture\" width=\"400\" height=\"500\" onchange=\"updateImage()\"></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</select><br><br><label for=\"quantity\">Quantity:</label> <input type=\"number\" id=\"quantity\" name=\"quantity\" value=\"1\" min=\"1\" max=\"100\"></fieldset><p>*Round up for charity?</p><label for=\"yes\">yes</label> <input type=\"radio\" id=\"yes\" name=\"rup\" value=\"True\"> <label for=\"no\">no</label> <input type=\"radio\" id=\"no\" name=\"rup\" value=\"False\" checked> <input type=\"submit\" value=\"Submit\"> <input type=\"hidden\" name=\"timestamp\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var6 string
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", time.Now().Unix()))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/store.templ`, Line: 45, Col: 84}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></form><div id=\"product-view\"><img id=\"productImg\" src=\"\" alt=\"Product Picture\" width=\"400\" height=\"500\" onchange=\"updateImage()\"><p id=\"prodLabel\"></p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -79,7 +119,7 @@ func Store(products map[string]float64) templ.Component {
 	})
 }
 
-func PurchaseConfirmation(purchaseInformation types.PurchaseInfo) templ.Component {
+func PurchaseConfirmation(message string, purchaseInformation types.PurchaseInfo) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -95,34 +135,34 @@ func PurchaseConfirmation(purchaseInformation types.PurchaseInfo) templ.Componen
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><p>Thank you for your order,  ")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s %s (%s)", purchaseInformation.FName, purchaseInformation.LName, purchaseInformation.Email))
+		var templ_7745c5c3_Var8 string
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(message)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/store.templ`, Line: 55, Col: 109}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/store.templ`, Line: 56, Col: 12}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(".</p><p>You have selected  ")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d %s Lamp(s) at %.2f each", purchaseInformation.Quantity, purchaseInformation.ProductName, purchaseInformation.ProductPrice))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><p>You have selected  ")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/store.templ`, Line: 57, Col: 141}
+			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+		var templ_7745c5c3_Var9 string
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d %s Lamp(s) at %.2f each", purchaseInformation.Quantity, purchaseInformation.ProductName, purchaseInformation.ProductPrice))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/store.templ`, Line: 58, Col: 141}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -130,12 +170,12 @@ func PurchaseConfirmation(purchaseInformation types.PurchaseInfo) templ.Componen
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("$%.2f", purchaseInformation.SubTotal))
+		var templ_7745c5c3_Var10 string
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("$%.2f", purchaseInformation.SubTotal))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/store.templ`, Line: 58, Col: 66}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/store.templ`, Line: 59, Col: 66}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -143,12 +183,12 @@ func PurchaseConfirmation(purchaseInformation types.PurchaseInfo) templ.Componen
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var8 string
-		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("$%.2f", purchaseInformation.TotalTax))
+		var templ_7745c5c3_Var11 string
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("$%.2f", purchaseInformation.TotalTax))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/store.templ`, Line: 59, Col: 85}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/store.templ`, Line: 60, Col: 85}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -161,12 +201,12 @@ func PurchaseConfirmation(purchaseInformation types.PurchaseInfo) templ.Componen
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var9 string
-			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("$%.2f", purchaseInformation.TotalRound))
+			var templ_7745c5c3_Var12 string
+			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("$%.2f", purchaseInformation.TotalRound))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/store.templ`, Line: 61, Col: 121}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/store.templ`, Line: 62, Col: 121}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

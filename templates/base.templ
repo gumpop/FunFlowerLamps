@@ -8,13 +8,19 @@ templ Base(content templ.Component) {
 		<link rel="stylesheet" href="assets/styles/styles.css">
 	</head>
 	<script>
-		function updateImage(){
+		function updateImage(prod){
 			var input = document.getElementById("products");
-			var select = input.value;
-			document.getElementById("productImg").src = "/assets/images/"+select+".jpg";
+			var select = prod[prod.selectedIndex].dataset.image;
+			const quantity = prod[prod.selectedIndex].dataset.stock;
+			document.getElementById("productImg").src = "/assets/images/"+select;
 			document.getElementById("productImg").blur();
 			var title = document.getElementById("prodLabel");
-			title.innerHTML = select + " Lamp";
+			if(quantity == 0){
+				title.innerHTML = "SOLD OUT";
+			} else if(quantity < 5){
+				title.innerHTML = "Only "+quantity+" left!";
+			}
+			
 		}
 	</script>
 	<body>
@@ -36,6 +42,7 @@ templ header() {
     <ul>
         <li><a href="">Home</a></li>
   	    <li><a href="http://localhost:8000/store">Shop</a></li>
+		<li><a href="http://localhost:8000/admin">Admin</a></li>
     </ul>	
 	</nav>
 }

@@ -3,9 +3,10 @@ package templates
 import (
 "fmt"
 "go-store/types"
+"time"
 )
 
-templ Store(products map[string]float64) {
+templ Store(products []types.Product) {
 	<form id="store-form" method="POST" action="/purchase">
 		<fieldset>
 		<legend>Personal Info</legend>
@@ -22,12 +23,12 @@ templ Store(products map[string]float64) {
 		<fieldset>
 			<legend>Product Info</legend>
 			<label for="products">*Choose a product:</label>
-        	<select id="products" name="productName" onchange="updateImage()" required>
+        	<select id="products" name="productName" onchange="updateImage(this)" required>
 				<option value="" disabled selected>Select an option</option>
-				for product, price := range products {
-					<option value={product}>{ fmt.Sprintf("%s - %.2f", product,
-						price) }</option>
-				}
+				for _, prod := range products {
+				<option value={fmt.Sprintf("%d", prod.ID)} data-stock={fmt.Sprintf("%d", prod.InStock)} data-image={prod.Image}>{ fmt.Sprintf("%s - %.2f", prod.Name,
+					prod.Price) }</option>
+            }
         	</select><br><br>
 			<label for="quantity">Quantity:</label>
 			<input type="number" id="quantity" name="quantity" value="1" min="1" max="100">
@@ -41,18 +42,18 @@ templ Store(products map[string]float64) {
 		<input type="radio" id="no" name="rup" value="False" checked>
 
 		<input type="submit" value="Submit">
+		<input type="hidden" name="timestamp" value={ fmt.Sprintf("%d", time.Now().Unix()) }/>
 	</form>
 	<div id="product-view">
-		<p id="prodLabel">Image will appear once a product is selected!</p>
 		<img id="productImg" src="" alt="Product Picture" width="400" height="500" onchange="updateImage()"></img>
+		<p id="prodLabel"></p>
 	</div>
 	
 }
 
-templ PurchaseConfirmation(purchaseInformation types.PurchaseInfo) {
+templ PurchaseConfirmation(message string, purchaseInformation types.PurchaseInfo) {
 <div>
-	<p>Thank you for your order, 
-	{ fmt.Sprintf("%s %s (%s)", purchaseInformation.FName, purchaseInformation.LName, purchaseInformation.Email) }.</p>
+	<p>{message}</p>
 	<p>You have selected 
 	{ fmt.Sprintf("%d %s Lamp(s) at %.2f each", purchaseInformation.Quantity, purchaseInformation.ProductName, purchaseInformation.ProductPrice) }.</p>
 	<p>Subtotal: { fmt.Sprintf("$%.2f", purchaseInformation.SubTotal) }<br>
