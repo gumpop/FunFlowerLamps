@@ -97,3 +97,18 @@ p#prodLabel {
     font-weight: bold;
 }
 
+main {
+    float: left;
+}
+  
+  /* The aside is 2/5 of the space */
+  
+aside {
+    float: right;
+    margin-right: 6em;
+    margin-top: 40%;
+}
+
+.selected{
+    background-color: rgb(250, 174, 216);
+}

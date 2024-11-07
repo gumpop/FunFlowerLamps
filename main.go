@@ -6,6 +6,7 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"net/url"
 	"strconv"
 	"time"
 
@@ -51,6 +52,86 @@ func main() {
 		var products []types.Product
 		products, err = dbs.GetAllProducts(conn)
 		return Render(ctx, http.StatusOK, templates.Base(templates.Store(products)))
+	})
+
+	e.GET("/order_entry", func(ctx echo.Context) error {
+		var products []types.Product
+		products, err = dbs.GetAllProducts(conn)
+		return Render(ctx, http.StatusOK, templates.Base(templates.OrderEntry(products)))
+	})
+
+	e.GET("/get_prod_stock", func(ctx echo.Context) error {
+		var stock int
+		var id int64
+		id, err := strconv.ParseInt(ctx.QueryParam("product"), 10, 64)
+		if err != nil {
+			//eating it NOMNOMNOM
+		}
+		stock, err = dbs.GetInStock(int(id), conn)
+
+		return ctx.String(http.StatusOK, fmt.Sprintf("%d", stock))
+	})
+
+	e.GET("/get_customers", func(ctx echo.Context) error {
+		var pattern url.Values
+		pattern = ctx.QueryParams()
+		var customers []types.Customer
+		if pattern["fName"] != nil {
+			customers = dbs.GetCustomersByFirst(ctx.QueryParam("fName"), conn)
+		} else {
+			customers = dbs.GetCustomersByLast(ctx.QueryParam("lName"), conn)
+		}
+		return Render(ctx, http.StatusOK, templates.CustTable(customers))
+	})
+
+	e.POST("/add_order", func(ctx echo.Context) error {
+
+		q, err := strconv.ParseInt(ctx.FormValue("quantity"), 10, 64)
+		if err != nil {
+			//eating it NOMNOMNOM
+		}
+		r := false
+		pd, err := strconv.ParseInt(ctx.FormValue("productName"), 10, 64)
+		if err != nil {
+			//eating it NOMNOMNOM
+		}
+		ts, err := strconv.ParseInt(ctx.FormValue("timestamp"), 10, 64)
+		if err != nil {
+			//eating it NOMNOMNOM
+		}
+		var cust types.Customer
+		cust, err = dbs.GetCustomerByEmail(ctx.FormValue("email"), conn)
+		var message string
+		if err != nil {
+			message = "Welcome new customer! Thank you for your order, " + ctx.FormValue("fName") + " " + ctx.FormValue("lName")
+			dbs.AddCustomer(ctx.FormValue("email"), ctx.FormValue("fName"), ctx.FormValue("lName"), conn)
+			cust, err = dbs.GetCustomerByEmail(ctx.FormValue("email"), conn)
+		} else {
+			message = "Welcome Back! Thank you for your order, " + ctx.FormValue("fName") + " " + ctx.FormValue("lName")
+		}
+		var prod types.Product
+		prod, err = dbs.GetProductByID(int(pd), conn)
+		var add bool
+		add, err = dbs.CheckOrder(cust.ID, prod.ID, ts, conn)
+		if add {
+			dbs.AddOrder(prod.ID, cust.ID, int(q), prod.Price, prod.Price*float64(q)*0.0875, math.Ceil(prod.Price*float64(q)*1.0875)-prod.Price, ts, conn)
+			dbs.SellProduct(int(q), prod.ID, conn)
+		}
+
+		var purchaseInfo types.PurchaseInfo
+		purchaseInfo.Email = cust.Email
+		purchaseInfo.FName = cust.FName
+		purchaseInfo.LName = cust.LName
+		purchaseInfo.ProductName = prod.Name
+		purchaseInfo.ProductPrice = prod.Price
+		purchaseInfo.Quantity = q
+		purchaseInfo.RoundUp = r
+		purchaseInfo.SubTotal = prod.Price * float64(q)
+		purchaseInfo.TimeStamp = time.Now().String()
+		purchaseInfo.TotalTax = prod.Price * float64(q) * 1.0875
+		purchaseInfo.TotalRound = math.Ceil(prod.Price * float64(q) * 1.0875)
+
+		return Render(ctx, http.StatusOK, templates.PurchaseConfirmation(message, purchaseInfo))
 	})
 
 	e.POST("/purchase", func(ctx echo.Context) error {
