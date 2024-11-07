@@ -1,0 +1,89 @@
+package templates
+
+import (
+"fmt"
+"go-store/types"
+)
+
+
+templ Queries(customers types.CustomerResults, orders types.OrderResults, products types.ProductResults) {
+    <h2>Customers</h2>
+    <table>
+        <thead>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+        </thead>
+        <tbody> 
+            for _, customer := range customers.Customers {
+                <tr>
+                    <td>{ customer.FName }</td>
+                    <td>{ customer.LName }</td>
+                    <td>{ customer.Email }</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p>Total count: { fmt.Sprintf("%d", customers.Num) }</p>
+    <p>Customer 2 by ID ... { customers.Customer2.Email }</p>
+    <p>Customer 3 by ID ... { customers.Customer3 }</p>
+    <p>Find by email { customers.Customer4.Email } </p>
+    <p>Find by email dduck@mines.edu { customers.Customer5 } Adding...</p>
+    <p>Find by email { customers.Customer6.Email } </p>
+    <hr>
+
+    <h2>Orders</h2>
+    <p>Number of orders: { fmt.Sprintf("%d", orders.Num) }</p>
+    <p>Adding order ... Orders below</p>
+    <table>
+        <thead>
+            <th>Customer Name</th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Tax</th>
+            <th>Donation</th>
+            <th>Time</th>
+
+        </thead>
+        <tbody> 
+            for _, order := range orders.Orders {
+                <tr>
+                    <td>{ order.FName }</td>
+                    <td>{ order.ProductName }</td>
+                    <td>{ fmt.Sprintf("%d", order.Quantity) }</td>
+                    <td>{ fmt.Sprintf("%.2f", order.ProductPrice) }</td>
+                    <td>{ fmt.Sprintf("%.2f", order.TotalTax) }</td>
+                    <td>{ fmt.Sprintf("%.2f", order.TotalRound) }</td>
+                    <td>{ order.TimeStamp }</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p>Number of orders: { fmt.Sprintf("%d", orders.AfterNum) }</p>
+    <hr>
+
+    <h2>Products</h2>
+    <table>
+        <thead>
+            <th>Name</th>
+            <th>Image</th>
+            <th>Price</th>
+            <th>In Stock</th>
+        </thead>
+        <tbody> 
+            for _, prod := range products.Products {
+                <tr>
+                    <td>{ prod.Name }</td>
+                    <td>{ prod.Image }</td>
+                    <td>{ fmt.Sprintf("%.2f", prod.Price) }</td>
+                    <td>{ fmt.Sprintf("%d", prod.InStock) }</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p>Selling 2 Lily lamps...</p>
+    <p>Left in stock: { fmt.Sprintf("%d", products.Num1) }</p>
+    <p>Selling 10 Lily lamps...</p>
+    <p>Left in stock: { fmt.Sprintf("%d", products.Num2) }</p>
+}

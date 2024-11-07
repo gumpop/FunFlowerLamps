@@ -1,0 +1,107 @@
+package templates
+
+import (
+"fmt"
+"go-store/types"
+"time"
+)
+
+templ OrderEntry(products []types.Product) {
+    <main>
+        <form id="store-form" hx-trigger="submit" hx-post="/add_order" hx-swap="innerHTML" hx-target="#asideContent">
+            <fieldset>
+            <legend>Personal Info</legend>
+                <label for="first-name">*First Name:</label><br>
+                <input type="text" id="first-name" name="fName" 
+                hx-trigger="keyup" hx-target="#custTable" hx-get="/get_customers" 
+                hx-swap="innerHTML" 
+                pattern="[ A-Za-z']{1,32}" title="Name can only contain letters and apostrophies" required><br>
+                <label for="last-name">*Last Name:</label><br>
+                <input type="text" id="last-name" name="lName" 
+                hx-trigger="keyup" hx-target="#custTable" hx-get="/get_customers" 
+                hx-swap="innerHTML"
+                pattern="[ A-Za-z']{1,32}" title="Name can only contain letters and apostrophies" required><br>
+
+                <label for="email">*Email:</label><br>
+                <input type="email" id="email" name="email" required><br>
+            </fieldset>
+            
+            <fieldset>
+                <legend>Product Info</legend>
+                <label for="products">*Choose a product:</label>
+                <select id="products" name="productName" onchange="updateStock()" required>
+                    <option value="" disabled selected>Select an option</option>
+                    for _, prod := range products {
+                    <option value={fmt.Sprintf("%d", prod.ID)}>{ fmt.Sprintf("%s - %.2f", prod.Name,
+                        prod.Price) }</option>
+                    }
+                </select><br><br>
+                <label for="availible">Availible:</label>
+                <input type="text" id="availible" name="availible" readonly> <br>
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" name="quantity" value="1" min="0" max="100">
+            </fieldset>
+            
+            <input type="reset" value="Reset" style="background-color:#ac005e; color:white;">
+            <input type="submit" value="Submit">
+            <input type="hidden" name="timestamp" value={ fmt.Sprintf("%d", time.Now().Unix()) }/>
+        </form>
+    </main>
+    <aside id="asideContent">
+    <div id="table-contents"><table id="custTable"></table></div>
+    </aside>
+	
+	<script>
+    document.addEventListener("htmx:afterRequest", function(e) {
+
+        if(e.detail.target.id == "custTable"){
+            highlight_row();
+        }
+        if(e.detail.target.id == "asideContent"){
+            e.detail.target.reset();
+        }
+    });
+        function highlight_row() {
+            var table = document.getElementById('custTable');
+            var cells = table.getElementsByTagName('td');
+            for (var i = 0; i < cells.length; i++) {
+                // Take each cell
+                var cell = cells[i];
+                // do something on onclick event for cell
+                cell.onclick = function () {
+                    // Get the row id where the cell exists
+                    var rowId = this.parentNode.rowIndex;
+
+                    var rowsNotSelected = table.getElementsByTagName('tr');
+                    for (var row = 0; row < rowsNotSelected.length; row++) {
+                        rowsNotSelected[row].style.backgroundColor = "";
+                        rowsNotSelected[row].classList.remove('selected');
+                    }
+                    var rowSelected = table.getElementsByTagName('tr')[rowId];
+                    rowSelected.className += " selected";
+                    var values = rowSelected.getElementsByTagName('td')
+                    document.getElementById('first-name').value = values[0].innerHTML;
+                    document.getElementById('last-name').value = values[1].innerHTML;
+                    document.getElementById('email').value = values[2].innerHTML;
+                }
+            }
+
+        }
+    
+        function updateStock(){
+			var input = document.getElementById("products").value;
+            var xmlhttp = new XMLHttpRequest();  
+            xmlhttp.onreadystatechange = function() {  
+            if (this.readyState == 4 && this.status == 200) {  
+                amt = this.responseText;  
+                document.getElementById("availible").value = amt;  
+                document.getElementById("quantity").max = parseInt(amt, 10);
+            }  
+            };  
+            xmlhttp.open("GET", "get_prod_stock?product=" + input, true);  
+            xmlhttp.send();  
+			
+		}
+    </script>
+    <script src="https://unpkg.com/htmx.org@2.0.3"></script>
+}

@@ -1,0 +1,88 @@
+package templates
+
+import (
+"fmt"
+"go-store/types"
+)
+
+
+templ Admin(customers []types.Customer, orders []types.PurchaseInfo, products []types.Product) {
+    <h2>Customers</h2>
+    if (len(customers) == 0){
+        <p>There are no customers</p>
+    } else {
+        <table>
+        <thead>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+        </thead>
+        <tbody> 
+            for _, customer := range customers {
+                <tr>
+                    <td>{ customer.FName }</td>
+                    <td>{ customer.LName }</td>
+                    <td>{ customer.Email }</td>
+                </tr>
+            }
+        </tbody>
+        </table>
+    }
+
+    <h2>Orders</h2>
+    if (len(orders) == 0){
+        <p>There are no orders</p>
+    } else {
+        <table>
+            <thead>
+                <th>Customer Name</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Tax</th>
+                <th>Donation</th>
+                <th>Time</th>
+
+            </thead>
+            <tbody> 
+                for _, order := range orders {
+                    <tr>
+                        <td>{ order.FName }</td>
+                        <td>{ order.ProductName }</td>
+                        <td>{ fmt.Sprintf("%d", order.Quantity) }</td>
+                        <td>{ fmt.Sprintf("%.2f", order.ProductPrice) }</td>
+                        <td>{ fmt.Sprintf("%.2f", order.TotalTax) }</td>
+                        <td>{ fmt.Sprintf("%.2f", order.TotalRound) }</td>
+                        <td>{ order.TimeStamp }</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <hr>
+
+    <h2>Products</h2>
+    if (len(customers) == 0){
+        <p>There are no products</p>
+    } else {
+        <table>
+            <thead>
+                <th>Name</th>
+                <th>Image</th>
+                <th>Price</th>
+                <th>In Stock</th>
+            </thead>
+            <tbody> 
+                for _, prod := range products {
+                    <tr>
+                        <td>{ prod.Name }</td>
+                        <td>{ prod.Image }</td>
+                        <td>{ fmt.Sprintf("%.2f", prod.Price) }</td>
+                        <td>{ fmt.Sprintf("%d", prod.InStock) }</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}

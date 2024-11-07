@@ -1,0 +1,30 @@
+package templates
+
+import (
+"go-store/types"
+)
+
+
+templ CustTable(customers []types.Customer) {
+    if (len(customers) == 0){
+        <p>There are no customers matching the search parameters</p>
+    } else {
+        <table border="1">
+            <thead>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+            </thead>
+            <tbody> 
+                for _, customer := range customers {
+                    <tr>
+                        <td>{ customer.FName }</td>
+                        <td>{ customer.LName }</td>
+                        <td>{ customer.Email }</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        
+    }
+}

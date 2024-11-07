@@ -1,0 +1,1 @@
+Searches by both first and last name
